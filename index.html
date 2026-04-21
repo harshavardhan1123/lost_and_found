@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found - Campus Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Role Tabs */
+        .role-tabs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .role-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: var(--radius-full);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            background: transparent;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text-sub);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            font-family: 'Outfit', sans-serif;
+        }
+        .role-tab:hover {
+            border-color: rgba(212, 160, 23, 0.3);
+            background: rgba(212, 160, 23, 0.04);
+        }
+        .role-tab.active {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            background: rgba(212, 160, 23, 0.06);
+            box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.1);
+        }
+        .role-tab .tab-emoji {
+            font-size: 18px;
+        }
+
+        /* Forgot password link */
+        .forgot-password-link {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-primary);
+            transition: all 0.3s ease;
+        }
+        .forgot-password-link:hover {
+            color: var(--color-primary-dark);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="login-mode">
+    <div id="app">
+        <!-- Dashboard Navigation -->
+        <nav id="navbar" class="hidden">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h2>🔍 L&F Campus</h2>
+                </div>
+                <!-- Navigation links -->
+                <div class="nav-links">
+                    <a href="#" data-page="dashboard" class="active">📊 Dashboard</a>
+                    <a href="#" data-page="view-items">📋 View Items</a>
+                    <a href="#" data-page="report-lost">🔴 Report Lost</a>
+                    <a href="#" data-page="report-found">🟢 Report Found</a>
+                    <a href="#" data-page="admin" id="nav-admin" class="hidden">⚙️ Admin</a>
+                    <a href="#" data-page="login" id="logout-btn">🚪 Log Out</a>
+                </div>
+            </div>
+        </nav>
+
+        <main id="main-content">
+            <!-- 1. LOGIN / SIGNUP PAGE -->
+            <section id="page-login" class="page active">
+                <div class="auth-container">
+                    <div class="card auth-card">
+                        <div class="auth-header">
+                            <h1 id="auth-title">Lost & Found</h1>
+                            <p id="auth-subtitle">Campus Item Management</p>
+                        </div>
+
+                        <!-- Role Tabs -->
+                        <div class="role-tabs" id="role-tabs">
+                            <button class="role-tab" data-role="admin" id="role-tab-admin">
+                                <span class="tab-emoji">👑</span> Admin
+                            </button>
+                            <button class="role-tab active" data-role="user" id="role-tab-user">
+                                <span class="tab-emoji">🧑‍🎓</span> User
+                            </button>
+
+                        </div>
+
+                        <form id="auth-form" class="form-group">
+                            <div class="input-group hidden" id="name-group">
+                                <label for="reg-name">FULL NAME</label>
+                                <input type="text" id="reg-name" placeholder="John Doe">
+                            </div>
+                            <div class="input-group">
+                                <label for="email">EMAIL ADDRESS</label>
+                                <input type="email" id="email" placeholder="name@srmap.edu.in" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="password">PASSWORD</label>
+                                <input type="password" id="password" placeholder="Enter your password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block" id="auth-submit">Sign In</button>
+                        </form>
+                        <div class="auth-toggle">
+                            <span id="auth-toggle-text">Don't have an account?</span> 
+                            <a href="#" id="auth-toggle-link">Sign Up</a>
+                        </div>
+                        <a href="#" class="forgot-password-link" id="admin-login-link">Forgot Password?</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. DASHBOARD PAGE -->
+            <section id="page-dashboard" class="page hidden">
+                <div class="dashboard-header">
+                    <h1>Campus Lost & Found</h1>
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search items...">
+                    </div>
+                </div>
+                <div class="dashboard-content">
+                    <div class="section-title">
+                        <h2>Recent Lost Items</h2>
+                        <a href="#" class="view-all" onclick="navigateTo('view-items')">See All</a>
+                    </div>
+                    <div class="item-grid" id="recent-lost-grid"></div>
+
+                    <div class="section-title mt-4">
+                        <h2>Recent Found Items</h2>
+                        <a href="#" class="view-all" onclick="navigateTo('view-items')">See All</a>
+                    </div>
+                    <div class="item-grid" id="recent-found-grid"></div>
+                </div>
+            </section>
+
+            <!-- 3. REPORT LOST ITEM PAGE -->
+            <section id="page-report-lost" class="page hidden">
+                <div class="form-page-container">
+                    <div class="card form-card">
+                        <h1>Report Lost Item</h1>
+                        <p class="subtitle">Submit details. We will check existing Found metrics immediately.</p>
+                        <form id="lost-form">
+                            <div class="input-group">
+                                <label for="lost-name">Item Name</label>
+                                <input type="text" id="lost-name" placeholder="E.g., AirPods Pro" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="lost-category">Category</label>
+                                <select id="lost-category" required><option value="">Loading...</option></select>
+                            </div>
+                            <div class="input-group">
+                                <label for="lost-location-select">Last Seen Location</label>
+                                <select id="lost-location-select" required><option value="">Loading...</option></select>
+                            </div>
+                            <div class="input-group">
+                                <label for="lost-desc">Description</label>
+                                <textarea id="lost-desc" rows="3" placeholder="Provide distinct colors or brands." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Report Lost Item</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. REPORT FOUND ITEM PAGE -->
+            <section id="page-report-found" class="page hidden">
+                <div class="form-page-container">
+                    <div class="card form-card">
+                        <h1>Report Found Item</h1>
+                        <p class="subtitle">Log a newly found asset into the backend register.</p>
+                        <form id="found-form">
+                            <div class="input-group">
+                                <label for="found-name">Item Name</label>
+                                <input type="text" id="found-name" placeholder="E.g., Blue Yeti Water Bottle" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="found-category">Category</label>
+                                <select id="found-category" required><option value="">Loading...</option></select>
+                            </div>
+                            <div class="input-group">
+                                <label for="found-location-select">Found Location</label>
+                                <select id="found-location-select" required><option value="">Loading...</option></select>
+                            </div>
+                            <div class="input-group">
+                                <label for="found-desc">Description</label>
+                                <textarea id="found-desc" rows="3" placeholder="Provide detailed condition marks." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Report Found Item</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. VIEW ITEMS PAGE -->
+            <section id="page-view-items" class="page hidden">
+                <div class="page-header">
+                    <h1>Browse Items</h1>
+                </div>
+                <div class="filters">
+                    <select id="filter-status">
+                        <option value="All">All Status</option>
+                        <option value="Lost">Lost</option>
+                        <option value="Found">Found</option>
+                    </select>
+                    <select id="filter-category"><option value="">All Categories</option></select>
+                </div>
+                <div class="item-grid" id="all-items-grid"></div>
+            </section>
+
+            <!-- 6. CLAIM ITEM PAGE -->
+            <section id="page-claim-item" class="page hidden">
+                <div class="claim-container">
+                    <button class="btn btn-back" onclick="navigateTo('view-items')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg> Back
+                    </button>
+                    <div class="card detail-card" id="item-detail-content"></div>
+                </div>
+            </section>
+
+            <!-- 7. BASIC ADMIN PAGE -->
+            <section id="page-admin" class="page hidden">
+                <div class="page-header">
+                    <h1>Admin Dashboard</h1>
+                    <p class="subtitle">Review pending claims and auto-verify routing logic.</p>
+                </div>
+                <div class="card table-card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Item Target</th>
+                                    <th>Claimant</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Smart Matched Detection Popup Overlay -->
+    <div id="match-popup" class="modal-overlay hidden">
+        <div class="modal-content card">
+            <h2 style="color:var(--color-accent); margin-bottom: 8px;">Potential Match Found!</h2>
+            <p class="subtitle" style="margin-bottom: 24px;">Our algorithm detected Found items near this logic area that closely match your description. View them now?</p>
+            <div id="match-popup-items" style="max-height: 250px; overflow-y: auto; margin-bottom: 24px;"></div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn btn-back" style="margin:0;" onclick="closeMatchPopup()">Dismiss</button>
+                <button class="btn btn-primary" onclick="closeMatchPopup(); navigateTo('view-items');">View Items</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
